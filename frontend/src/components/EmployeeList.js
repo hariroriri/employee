@@ -1,6 +1,4 @@
-// src/components/EmployeeList.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
@@ -11,10 +9,14 @@ const EmployeeList = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/employees');
-      setEmployees(res.data);
+      const response = await fetch('http://localhost:5000/api/employees');
+      if (!response.ok) {
+        throw new Error('Failed to fetch employees');
+      }
+      const data = await response.json();
+      setEmployees(data);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching employees:', err.message);
     }
   };
 

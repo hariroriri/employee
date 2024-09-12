@@ -1,6 +1,4 @@
-// src/components/AddEmployee.js
 import React, { useState } from 'react';
-import axios from 'axios';
 
 const AddEmployee = () => {
   const [employee, setEmployee] = useState({
@@ -19,13 +17,35 @@ const AddEmployee = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/employees', employee);
-      alert('Employee added successfully!');
+      const response = await fetch('http://127.0.0.1:5000/api/employees', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(employee),
+      });
+  
+      if (response.ok) {
+        alert('Employee added successfully!');
+        setEmployee({
+          first_name: '',
+          last_name: '',
+          email: '',
+          hire_date: '',
+          department: '',
+          position: ''
+        });
+      } else {
+        const errorData = await response.json();
+        console.error('Error details:', errorData); // Log the detailed error
+        throw new Error(errorData.message || 'Error adding employee');
+      }
     } catch (err) {
-      console.error(err);
-      alert('Error adding employee');
+      console.error('Error:', err.message);
+      alert(`Error adding employee: ${err.message}`);
     }
   };
+  
 
   return (
     <div>
